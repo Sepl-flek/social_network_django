@@ -23,10 +23,19 @@ class Post(models.Model):
 
 
 class UserPostRelation(models.Model):
+    rating_choice = (
+        (1, 'Bad'),
+        (2, 'Nice'),
+        (3, 'Good'),
+        (4, 'Perfect'),
+        (5, 'Amazing'),
+    )
+
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='user_post_relations')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_like = models.BooleanField(default=False)
     is_bookmark = models.BooleanField(default=False)
+    rating = models.SmallIntegerField(choices=rating_choice, null=True)
 
     def __str__(self):
         return f'{self.user}, {self.post}'

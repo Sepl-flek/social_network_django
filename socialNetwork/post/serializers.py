@@ -1,12 +1,14 @@
+from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
 from post.models import Post, UserPostRelation
 
 
 class PostSerializer(ModelSerializer):
+    rating = serializers.DecimalField(max_digits=3, decimal_places=2, read_only=True)
     class Meta:
         model = Post
-        fields = '__all__'
+        fields = ('id', 'header', 'description', 'likes', 'rating')
 
 
 class UserPostRelationSerializer(ModelSerializer):

@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.auth.models import User
+from django.db.models import Avg
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -19,7 +20,8 @@ class PostApiTestCase(APITestCase):
         url = reverse('post-list')
 
         request = self.client.get(url)
-        serializer_data = PostSerializer([self.post1, self.post2], many=True).data
+        posts = Post.objects.all().annotate(rating=Avg('user_post_relations__rating'))
+        serializer_data = PostSerializer(posts, many=True).data
         self.assertEqual(status.HTTP_200_OK, request.status_code)
         self.assertEqual(serializer_data, request.data)
 
@@ -27,7 +29,8 @@ class PostApiTestCase(APITestCase):
         url = reverse('post-detail', args=(self.post1.id,))
 
         response = self.client.get(url)
-        serializer_data = PostSerializer(self.post1).data
+        posts = Post.objects.all().annotate(rating=Avg('user_post_relations__rating')).first()
+        serializer_data = PostSerializer(posts).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(serializer_data, response.data)
 

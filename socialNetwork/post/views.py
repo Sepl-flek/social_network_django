@@ -1,3 +1,4 @@
+from django.db.models import Avg
 from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
@@ -13,7 +14,7 @@ from post.serializers import PostSerializer, UserPostRelationSerializer
 
 # Create your views here.
 class PostViewSet(ModelViewSet):
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().annotate(rating=Avg('user_post_relations__rating'))
     serializer_class = PostSerializer
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
